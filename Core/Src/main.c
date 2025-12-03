@@ -110,6 +110,23 @@ int main(void)
   /* USER CODE BEGIN WHILE */
   while (1)
   {
+    /* motor speed pid calc */
+    for (uint8_t i = 0; i < 7; i++)
+    {
+      motor_info[i].set_voltage = pid_calc(&motor_pid[i], target_speed, motor_info[i].rotor_speed);
+    }
+    /* send motor control message through can bus*/
+    set_motor_voltage(0,
+                      motor_info[0].set_voltage,
+                      motor_info[1].set_voltage,
+                      motor_info[2].set_voltage,
+                      motor_info[3].set_voltage);
+
+    set_motor_voltage(1,
+                      motor_info[4].set_voltage,
+                      motor_info[5].set_voltage,
+                      motor_info[6].set_voltage,
+                      0);
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
