@@ -55,6 +55,7 @@ void can_user_init(CAN_HandleTypeDef* hcan )
   */
 void HAL_CAN_RxFifo0MsgPendingCallback(CAN_HandleTypeDef *hcan)
 {
+  can_cnt ++;
   CAN_RxHeaderTypeDef rx_header;
   uint8_t             rx_data[8];
   if(hcan->Instance == CAN1)
