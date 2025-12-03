@@ -23,7 +23,11 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-
+#include "bsp_key.h"
+#include "bsp_led.h"
+#include "bsp_can.h"
+#include "bsp_pwm.h"
+#include "pid.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -44,7 +48,11 @@
 /* Private variables ---------------------------------------------------------*/
 
 /* USER CODE BEGIN PV */
-
+extern moto_info_t motor_info[MOTOR_MAX_NUM];
+int16_t led_cnt;
+pid_struct_t motor_pid[7];
+float target_speed;
+uint16_t pwm_pulse = 1080;  // default pwm pulse width:1080~1920
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -89,7 +97,13 @@ int main(void)
   MX_GPIO_Init();
   MX_CAN1_Init();
   /* USER CODE BEGIN 2 */
-
+  //HAL_GPIO_WritePin(GPIOH, POWER1_CTRL_Pin|POWER2_CTRL_Pin|POWER3_CTRL_Pin|POWER4_CTRL_Pin, GPIO_PIN_SET); // switch on 24v power
+  pwm_init();                              // start pwm output
+  can_user_init(&hcan1);                   // config can filter, start can
+  for (uint8_t i = 0; i < 7; i++)
+  {
+    pid_init(&motor_pid[i], 40, 3, 0, 30000, 30000); //init pid parameter, kp=40, ki=3, kd=0, output limit = 30000
+  }
   /* USER CODE END 2 */
 
   /* Infinite loop */
