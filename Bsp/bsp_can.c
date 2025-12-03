@@ -42,9 +42,18 @@ void can_user_init(CAN_HandleTypeDef* hcan )
   can_filter.FilterActivation = ENABLE;           // enable can filter
   can_filter.SlaveStartFilterBank  = 14;          // only meaningful in dual can mode
    
-  HAL_CAN_ConfigFilter(hcan, &can_filter);        // init can filter
-  HAL_CAN_Start(&hcan1);                          // start can1
-  HAL_CAN_ActivateNotification(&hcan1, CAN_IT_RX_FIFO0_MSG_PENDING); // enable can1 rx interrupt
+  if (HAL_CAN_ConfigFilter(hcan, &can_filter)!=HAL_OK)
+  {
+    //init_fault();
+  };        // init can filter
+  if (HAL_CAN_Start(&hcan1)!=HAL_OK)
+  {
+    //init_fault();
+  };                          // start can1
+  if (HAL_CAN_ActivateNotification(&hcan1, CAN_IT_RX_FIFO0_MSG_PENDING)!=HAL_OK)
+  {
+    //init_fault();
+  }; // enable can1 rx interrupt
 }
 
 /**
@@ -55,7 +64,7 @@ void can_user_init(CAN_HandleTypeDef* hcan )
   */
 void HAL_CAN_RxFifo0MsgPendingCallback(CAN_HandleTypeDef *hcan)
 {
-  can_cnt ++;
+  //can_cnt ++;//测试是否进回调函数
   CAN_RxHeaderTypeDef rx_header;
   uint8_t             rx_data[8];
   if(hcan->Instance == CAN1)

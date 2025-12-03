@@ -64,7 +64,14 @@ void SystemClock_Config(void);
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
-
+void init_fault()
+{
+  while (1)
+  {
+    HAL_Delay(500);
+    HAL_GPIO_TogglePin(fault_GPIO_Port,fault_Pin);
+  }
+}
 /* USER CODE END 0 */
 
 /**
