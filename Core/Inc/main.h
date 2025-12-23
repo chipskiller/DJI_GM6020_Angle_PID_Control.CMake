@@ -54,13 +54,28 @@ extern "C" {
 void Error_Handler(void);
 
 /* USER CODE BEGIN EFP */
-
+void init_fault();
 /* USER CODE END EFP */
 
 /* Private defines -----------------------------------------------------------*/
+#define POWER1_CTRL_Pin GPIO_PIN_2
+#define POWER1_CTRL_GPIO_Port GPIOH
+#define POWER2_CTRL_Pin GPIO_PIN_3
+#define POWER2_CTRL_GPIO_Port GPIOH
+#define POWER3_CTRL_Pin GPIO_PIN_4
+#define POWER3_CTRL_GPIO_Port GPIOH
+#define POWER4_CTRL_Pin GPIO_PIN_5
+#define POWER4_CTRL_GPIO_Port GPIOH
+#define fault_Pin GPIO_PIN_2
+#define fault_GPIO_Port GPIOG
+#define KEY_Pin GPIO_PIN_2
+#define KEY_GPIO_Port GPIOB
+#define LED_RED_Pin GPIO_PIN_11
+#define LED_RED_GPIO_Port GPIOE
+#define LED_GREEN_Pin GPIO_PIN_14
+#define LED_GREEN_GPIO_Port GPIOF
 
 /* USER CODE BEGIN Private defines */
-
 /* USER CODE END Private defines */
 
 #ifdef __cplusplus

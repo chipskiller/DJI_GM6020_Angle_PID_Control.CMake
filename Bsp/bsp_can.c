@@ -18,6 +18,7 @@
 #include "bsp_can.h"
 #include "bsp_led.h"
 
+
 moto_info_t motor_info[MOTOR_MAX_NUM];
 uint16_t can_cnt;
 
@@ -44,15 +45,15 @@ void can_user_init(CAN_HandleTypeDef* hcan )
    
   if (HAL_CAN_ConfigFilter(hcan, &can_filter)!=HAL_OK)
   {
-    //init_fault();
+    init_fault();
   };        // init can filter
   if (HAL_CAN_Start(&hcan1)!=HAL_OK)
   {
-    //init_fault();
+    init_fault();
   };                          // start can1
   if (HAL_CAN_ActivateNotification(&hcan1, CAN_IT_RX_FIFO0_MSG_PENDING)!=HAL_OK)
   {
-    //init_fault();
+    init_fault();
   }; // enable can1 rx interrupt
 }
 
@@ -64,6 +65,7 @@ void can_user_init(CAN_HandleTypeDef* hcan )
   */
 void HAL_CAN_RxFifo0MsgPendingCallback(CAN_HandleTypeDef *hcan)
 {
+  //init_fault();
   //can_cnt ++;//测试是否进回调函数
   CAN_RxHeaderTypeDef rx_header;
   uint8_t             rx_data[8];
@@ -72,7 +74,7 @@ void HAL_CAN_RxFifo0MsgPendingCallback(CAN_HandleTypeDef *hcan)
     HAL_CAN_GetRxMessage(hcan, CAN_RX_FIFO0, &rx_header, rx_data); //receive can data
   }
   if ((rx_header.StdId >= FEEDBACK_ID_BASE)
-   && (rx_header.StdId <  FEEDBACK_ID_BASE + MOTOR_MAX_NUM))                  // judge the can id
+      && (rx_header.StdId <  FEEDBACK_ID_BASE + MOTOR_MAX_NUM))//验证回报id                  // judge the can id
   {
     can_cnt ++;
     uint8_t index = rx_header.StdId - FEEDBACK_ID_BASE;                  // get motor index by can_id
@@ -98,12 +100,12 @@ void set_motor_voltage(uint8_t id_range, int16_t v1, int16_t v2, int16_t v3, int
 {
   CAN_TxHeaderTypeDef tx_header;
   uint8_t             tx_data[8];
-    
+  //设置报文头
   tx_header.StdId = (id_range == 0)?(0x1ff):(0x2ff);
   tx_header.IDE   = CAN_ID_STD;
   tx_header.RTR   = CAN_RTR_DATA;
   tx_header.DLC   = 8;
-
+  //设置发送数据
   tx_data[0] = (v1>>8)&0xff;
   tx_data[1] =    (v1)&0xff;
   tx_data[2] = (v2>>8)&0xff;
