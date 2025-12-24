@@ -169,10 +169,12 @@ int main(void)
     
     /* motor speed pid calc */
     target_angle+= rc.ch1/29.0;
+    //防跳变
     if (target_angle >8191||target_angle <-8191)
     {
       target_angle = 0;
     }
+
     for (uint8_t i = 0; i < 7; i++)
     {
       motor_info[i].set_voltage = pid_calc(&motor_pid[i], target_angle, motor_info[i].rotor_angle);
