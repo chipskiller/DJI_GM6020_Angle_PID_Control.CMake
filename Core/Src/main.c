@@ -76,7 +76,7 @@
 extern moto_info_t motor_info[MOTOR_MAX_NUM];
 int16_t led_cnt;
 pid_struct_t motor_pid[7];
-float target_speed;
+float target_angle;
 uint16_t pwm_pulse = 1080;  // default pwm pulse width:1080~1920
 extern rc_info_t rc;
 /* USER CODE END PV */
@@ -137,7 +137,7 @@ int main(void)
   can_user_init(&hcan1);//滤波器设置，开启CAN                   // config can filter, start can
   for (uint8_t i = 0; i < 7; i++)
   {
-    pid_init(&motor_pid[i], 40, 6, 2, 30000, 30000); //init pid parameter, kp=40, ki=3, kd=0, output limit = 30000
+    pid_init(&motor_pid[i], 70, 6, 2, 30000, 25000); //init pid parameter, kp=40, ki=3, kd=0, output limit = 30000
   }
   dbus_uart_init();
   /* USER CODE END 2 */
@@ -168,10 +168,14 @@ int main(void)
     // }
     
     /* motor speed pid calc */
-    target_speed= rc.ch1;
+    target_angle+= rc.ch1/29.0;
+    if (target_angle >8191||target_angle <-8191)
+    {
+      target_angle = 0;
+    }
     for (uint8_t i = 0; i < 7; i++)
     {
-      motor_info[i].set_voltage = pid_calc(&motor_pid[i], target_speed, motor_info[i].rotor_speed);
+      motor_info[i].set_voltage = pid_calc(&motor_pid[i], target_angle, motor_info[i].rotor_angle);
     }
     /* send motor control message through can bus*/
     set_motor_voltage(0, 
